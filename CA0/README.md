@@ -2,12 +2,23 @@
 
 ## VM Specifications
 
+## Assignment-Compliant Deployment (Per Requirements: 3-4 VMs, ~2 vCPU, 4GB RAM)
+
 | VM Name | Size | OS | vCPU | RAM | IP Address | Purpose |
 |---------|------|----|------|-----|------------|---------|
 | kafka-vm | t2.medium | Ubuntu 22.04 LTS | 2 | 4 GB | 10.0.1.10 | Kafka Broker + ZooKeeper + UI |
 | mongodb-vm | t2.medium | Ubuntu 22.04 LTS | 2 | 4 GB | 10.0.1.11 | MongoDB + Mongo Express |
 | processor-vm | t2.small | Ubuntu 22.04 LTS | 1 | 2 GB | 10.0.1.12 | Java Data Processor |
 | producer-vm | t2.small | Ubuntu 22.04 LTS | 1 | 2 GB | 10.0.1.13 | Python Data Producer |
+
+## Cost-Optimized Alternative (t2.micro - May Impact Performance)
+
+| VM Name | Size | OS | vCPU | RAM | IP Address | Purpose |
+|---------|------|----|------|-----|------------|---------|
+| kafka-vm | t2.micro | Ubuntu 22.04 LTS | 1 | 1 GB | 10.0.1.10 | Kafka + ZooKeeper + UI |
+| mongodb-vm | t2.micro | Ubuntu 22.04 LTS | 1 | 1 GB | 10.0.1.11 | MongoDB + Mongo Express |
+| processor-vm | t2.micro | Ubuntu 22.04 LTS | 1 | 1 GB | 10.0.1.12 | Java Data Processor |
+| producer-vm | t2.micro | Ubuntu 22.04 LTS | 1 | 1 GB | 10.0.1.13 | Python Data Producer |
 
 ## Image Tags and Version Numbers
 

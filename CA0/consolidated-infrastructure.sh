@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# AWS Infrastructure Provisioning Script
-# Distributed Data Pipeline Project
+# AWS Infrastructure Provisioning Script - T2.Micro Optimized
+# Consolidated deployment for cost optimization
 
 set -e
 
@@ -12,7 +12,7 @@ SUBNET_ID=""  # Will be populated after VPC creation
 SECURITY_GROUP_ID=""  # Will be populated after SG creation
 AMI_ID="ami-0c02fb55956c7d316"  # Ubuntu 22.04 LTS (use latest for your region)
 
-echo "🚀 Starting AWS Infrastructure Provisioning..."
+echo "🚀 Starting AWS Infrastructure Provisioning (t2.micro optimized)..."
 
 # Create VPC
 echo "📡 Creating VPC..."
@@ -79,7 +79,8 @@ SECURITY_GROUP_ID=$(aws ec2 create-security-group \
 aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 --region $REGION
 aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 9092 --source-group $SECURITY_GROUP_ID --region $REGION
 aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 27017 --source-group $SECURITY_GROUP_ID --region $REGION
-aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 8080 --source-group $SECURITY_GROUP_ID --region $REGION
+aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 8080 --cidr 0.0.0.0/0 --region $REGION
+aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 8081 --cidr 0.0.0.0/0 --region $REGION
 
 echo "✅ Security Group Created: $SECURITY_GROUP_ID"
 
@@ -93,8 +94,8 @@ else
     echo "⚠️ Key Pair already exists: $KEY_NAME"
 fi
 
-# Launch EC2 Instances
-echo "🖥️ Launching EC2 Instances..."
+# Launch EC2 Instances - CONSOLIDATED DEPLOYMENT
+echo "🖥️ Launching EC2 Instances (2 VMs for cost optimization)..."
 
 # Function to launch instance
 launch_instance() {
@@ -116,11 +117,9 @@ launch_instance() {
     return 0
 }
 
-# Launch all instances (4 VMs as per assignment requirements)
-launch_instance "kafka-vm"
-launch_instance "mongodb-vm"
-launch_instance "processor-vm" 
-launch_instance "producer-vm"
+# Launch consolidated instances
+launch_instance "kafka-mongodb-vm"    # Kafka + MongoDB + UIs
+launch_instance "processor-producer-vm"  # Processor + Producer
 
 echo "🎉 Infrastructure provisioning complete!"
 echo "📋 Summary:"
@@ -140,3 +139,4 @@ EOF
 
 echo "💾 Configuration saved to infrastructure-config.txt"
 echo "⏳ Wait 2-3 minutes for instances to initialize, then run: aws ec2 describe-instances --region $REGION"
+echo "💡 Cost Optimization: Using 2 t2.micro instances instead of 4 larger instances"

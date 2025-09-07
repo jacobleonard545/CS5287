@@ -1,0 +1,46 @@
+# Applications Docker Compose - Processor + Producer
+# For VM2: processor-producer-vm
+
+services:
+  # Data Processor (Java)
+  processor:
+    build: ./processor
+    container_name: kafka-processor
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-vm-private-ip:9092"
+      MONGODB_CONNECTION_STRING: "mongodb://admin:pipeline2023@kafka-vm-private-ip:27017/sensordata?authSource=admin"
+      JAVA_OPTS: "-Xmx256m -Xms128m"
+    volumes:
+      - processor_logs:/app/logs
+    restart: unless-stopped
+    mem_limit: 384m
+    depends_on:
+      - producer
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "java"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Data Producer (Python)
+  producer:
+    build: ./producer
+    container_name: kafka-producer
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-vm-private-ip:9092"
+      PYTHON_UNBUFFERED: 1
+    volumes:
+      - producer_logs:/app/logs
+    restart: unless-stopped
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "python"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  processor_logs:
+    driver: local
+  producer_logs:
+    driver: local
