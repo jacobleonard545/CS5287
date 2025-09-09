@@ -10,7 +10,7 @@ REGION="us-east-2"
 KEY_NAME="kafka-pipeline-key"
 SUBNET_ID=""  # Will be populated after VPC creation
 SECURITY_GROUP_ID=""  # Will be populated after SG creation
-AMI_ID="ami-0c02fb55956c7d316"  # Ubuntu 22.04 LTS (use latest for your region)
+AMI_ID="ami-0d9a665f802ae6227"  # Ubuntu 22.04 LTS - Latest for us-east-2
 
 echo "🚀 Starting AWS Infrastructure Provisioning..."
 

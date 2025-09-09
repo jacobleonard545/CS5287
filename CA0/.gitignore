@@ -1,0 +1,89 @@
+# Security - SSH Keys and Certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# AWS Credentials and Config
+.aws/
+*.aws
+credentials
+config
+
+# Environment Variables and Secrets
+.env
+.env.local
+.env.production
+secrets.txt
+passwords.txt
+
+# Infrastructure State
+terraform.tfstate*
+.terraform/
+*.tfvars
+
+# Logs
+*.log
+logs/
+*.out
+nohup.out
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.sublime-*
+.project
+.settings/
+
+# Node.js (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+.m2/
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Backup Files
+*.bak
+*.backup
+*.old
+*.orig
+
+# System Files
+.cache/
+.tmp/
+*.pid

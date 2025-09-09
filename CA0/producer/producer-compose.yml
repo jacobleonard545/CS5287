@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  sensor-producer:
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    container_name: sensor-producer
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:9092"
+      KAFKA_TOPIC: "sensor-data"
+      PRODUCER_INTERVAL: "5"
+      SENSOR_COUNT: "10"
+    volumes:
+      - /opt/kafka-pipeline/logs:/app/logs
+    restart: unless-stopped
+    user: "1000:1000"
+    depends_on:
+      - kafka
+
+  data-replay-producer:
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    container_name: data-replay-producer
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:9092"
+      KAFKA_TOPIC: "sensor-data"
+      PRODUCER_TYPE: "replay"
+      REPLAY_FILE: "/app/data/historical_data.csv"
+    volumes:
+      - /opt/kafka-pipeline/logs:/app/logs
+      - ./producer/data:/app/data
+    restart: unless-stopped
+    user: "1000:1000"
+    depends_on:
+      - kafka
+
+networks:
+  default:
+    external:
+      name: kafka-pipeline-network

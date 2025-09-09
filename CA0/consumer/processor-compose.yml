@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  data-processor:
+    image: kafka-processor:latest
+    container_name: kafka-processor
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "10.0.1.162:9092"
+      KAFKA_CONSUMER_TOPIC: "sensor-data"
+      KAFKA_PRODUCER_TOPIC: "processed-data"
+      MONGODB_URI: "mongodb://admin:pipeline2023@10.0.1.160:27017/sensordata"
+      PROCESSOR_BATCH_SIZE: "10"
+      PROCESSOR_INTERVAL: "5"
+    volumes:
+      - /opt/kafka-pipeline/logs:/app/logs
+    restart: unless-stopped
+    mem_limit: 256m

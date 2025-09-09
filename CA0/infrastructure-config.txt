@@ -1,0 +1,5 @@
+VPC_ID=vpc-0a96a1c6320328883
+SUBNET_ID=subnet-0ab17f59f7c8b40c8
+SECURITY_GROUP_ID=sg-07eec5f95e0c5b110
+KEY_NAME=kafka-pipeline-key
+REGION=us-east-2

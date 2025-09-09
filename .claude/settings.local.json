@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir)",
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(aws sts get-caller-identity:*)",
+      "Bash(aws ec2 describe-instances:*)",
+      "Bash(aws iam:*)",
+      "Bash(./aws-infrastructure.sh)",
+      "Bash(aws ec2 describe-images:*)",
+      "Bash(aws ec2 run-instances:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(aws ec2 describe-security-groups:*)",
+      "Bash(aws ec2 authorize-security-group-ingress:*)",
+      "Bash(gh:*)",
+      "Bash(git --version)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git rm:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
