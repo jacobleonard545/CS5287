@@ -1,0 +1,39 @@
+# AWS Keys and Credentials
+*.pem
+*.key
+conveyor-producer-key.pem
+*access-key*
+*secret-key*
+
+# AWS CLI Configuration
+.aws/
+aws-credentials*
+
+# SSH Keys
+id_rsa*
+id_ed25519*
+*.pub
+
+# Environment Files
+.env
+.env.*
+config.ini
+credentials.json
+
+# Sensitive Configuration
+database.url
+*api-key*
+*token*
+auth.config
+
+# Logs
+*.log
+logs/
+
+# Temporary Files
+*.tmp
+.cache/
+
+# IDE Files
+.vscode/settings.json
+.idea/

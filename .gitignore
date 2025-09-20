@@ -1,0 +1,99 @@
+# AWS Credentials and Keys
+*.pem
+*.key
+.aws/
+aws-credentials*
+*access-key*
+*secret-key*
+
+# SSH Keys
+id_rsa*
+id_ed25519*
+*.pub
+
+# Environment Variables and Config Files
+.env
+.env.*
+config.ini
+config.json
+credentials.json
+secrets.json
+
+# AWS CLI Config
+.aws/config
+.aws/credentials
+
+# Certificate Files
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# Database Connection Strings
+database.url
+db.config
+
+# API Keys and Tokens
+*api-key*
+*token*
+auth.config
+
+# Logs that might contain sensitive data
+*.log
+logs/
+log/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+temp/
+
+# IDE and Editor files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Node modules (if any Node.js is used)
+node_modules/
+npm-debug.log*
+
+# Python (if any Python scripts are used)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# Java (if any Java applications are used)
+*.class
+*.jar
+target/
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Documentation with sensitive info
+*password*
+*credential*
