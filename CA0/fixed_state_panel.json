@@ -1,0 +1,118 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Conveyor Line Speed Monitoring - FIXED",
+    "tags": ["conveyor", "iot", "manufacturing"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Real-time Conveyor Speed",
+        "type": "timeseries",
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"conveyor_data\")\n  |> range(start: -5m)\n  |> filter(fn: (r) => r._measurement == \"conveyor_speed\")\n  |> filter(fn: (r) => r._field == \"speed_ms\")\n  |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "ceyhg0ucowpa8e"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "min": 0,
+            "max": 0.3,
+            "displayName": "Speed (m/s)",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.2},
+                {"color": "red", "value": 0.28}
+              ]
+            }
+          }
+        },
+        "options": {
+          "legend": {"displayMode": "visible"},
+          "tooltip": {"mode": "single"}
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Conveyor State - FIXED",
+        "type": "stat",
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"conveyor_data\")\n  |> range(start: -30s)\n  |> filter(fn: (r) => r._measurement == \"conveyor_speed\")\n  |> filter(fn: (r) => r._field == \"speed_ms\")\n  |> last()\n  |> map(fn: (r) => ({_time: r._time, _value: r.state, _field: \"state\"}))",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "ceyhg0ucowpa8e"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "displayName": "Current State",
+            "mappings": [
+              {
+                "options": {
+                  "running": {"color": "green", "text": "RUNNING"},
+                  "stopped": {"color": "red", "text": "STOPPED"},
+                  "starting": {"color": "yellow", "text": "STARTING"},
+                  "stopping": {"color": "orange", "text": "STOPPING"},
+                  "maintenance": {"color": "purple", "text": "MAINTENANCE"}
+                },
+                "type": "value"
+              }
+            ]
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Current Speed",
+        "type": "gauge",
+        "targets": [
+          {
+            "refId": "A",
+            "query": "from(bucket: \"conveyor_data\")\n  |> range(start: -30s)\n  |> filter(fn: (r) => r._measurement == \"conveyor_speed\")\n  |> filter(fn: (r) => r._field == \"speed_ms\")\n  |> last()",
+            "datasource": {
+              "type": "influxdb",
+              "uid": "ceyhg0ucowpa8e"
+            }
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "min": 0,
+            "max": 0.3,
+            "displayName": "m/s",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.2},
+                {"color": "red", "value": 0.28}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8}
+      }
+    ],
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "refresh": "5s",
+    "schemaVersion": 38,
+    "version": 1
+  },
+  "folderId": 0,
+  "overwrite": true
+}
