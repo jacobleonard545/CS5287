@@ -1,3 +1,26 @@
+#!/bin/bash
+# CA1 Conveyor Producer Setup Script
+# Exact CA0 script implementation
+
+set -e
+exec > >(tee /var/log/producer-setup.log) 2>&1
+
+echo "$(date): Starting CA1 Producer setup..."
+
+# Update system
+apt-get update -y
+
+# Install Python and dependencies
+echo "$(date): Installing Python and dependencies..."
+apt-get install -y python3 python3-pip
+pip3 install kafka-python
+
+# Set hostname
+hostnamectl set-hostname CA1-conveyor-producer
+
+# Create exact CA0 producer script with dynamic Kafka IP
+echo "$(date): Creating exact CA0 producer script..."
+cat > /home/ubuntu/conveyor_producer.py << 'EOF'
 #!/usr/bin/env python3
 """
 Conveyor Line Speed Data Producer
@@ -21,7 +44,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-KAFKA_BROKER = '3.142.46.233:9092'  # kafka-hub instance
+KAFKA_BROKER = '${kafka_broker_ip}:9092'  # Dynamic CA1 kafka-hub instance
 KAFKA_TOPIC = 'conveyor-speed'
 CONVEYOR_ID = 'line_1'
 
@@ -202,3 +225,35 @@ class ConveyorProducer:
 if __name__ == "__main__":
     producer = ConveyorProducer()
     producer.run()
+EOF
+
+# Set ownership and permissions
+chown ubuntu:ubuntu /home/ubuntu/conveyor_producer.py
+chmod +x /home/ubuntu/conveyor_producer.py
+
+# Wait for Kafka to be ready (delay start)
+echo "$(date): Waiting 90 seconds for Kafka to be ready..."
+sleep 90
+
+# Start producer service
+echo "$(date): Starting producer service..."
+sudo -u ubuntu nohup python3 /home/ubuntu/conveyor_producer.py > /home/ubuntu/producer.log 2>&1 &
+
+# Create status check script
+cat > /home/ubuntu/check_producer.sh << 'EOF'
+#!/bin/bash
+echo "=== Producer Status ==="
+ps aux | grep conveyor_producer | grep -v grep
+echo ""
+echo "=== Last 10 log lines ==="
+tail -10 /home/ubuntu/producer.log
+echo ""
+echo "=== Message count ==="
+grep "Speed:" /home/ubuntu/producer.log | wc -l
+EOF
+
+chmod +x /home/ubuntu/check_producer.sh
+chown ubuntu:ubuntu /home/ubuntu/check_producer.sh
+
+echo "$(date): Producer setup completed successfully!"
+echo "$(date): Use 'sudo -u ubuntu /home/ubuntu/check_producer.sh' to check status"

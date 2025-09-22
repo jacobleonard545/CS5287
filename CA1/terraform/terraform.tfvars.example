@@ -1,0 +1,57 @@
+# CA1 Terraform Variables Template
+# Copy this file to terraform.tfvars and customize for your environment
+
+# AWS Configuration
+aws_region = "us-east-2"  # Change to your preferred region
+
+# Network Security - REQUIRED
+# Replace with your actual IP address for SSH access
+# Get your IP: curl ifconfig.me
+my_ip = "YOUR_PUBLIC_IP/32"  # IMPORTANT: Replace with your actual IP
+
+# SSH Key Configuration
+# Path to your public key file (will be uploaded to AWS)
+public_key_path = "~/.ssh/ca1-demo-key.pub"
+
+# Project Configuration - Customize to avoid conflicts
+project_name = "CA1"
+environment  = "dev"
+
+# IMPORTANT: Unique deployment ID to avoid conflicts in shared AWS accounts
+# This creates unique resource names: CA1-dev-johnsmith-vpc, CA1-dev-johnsmith-key, etc.
+deployment_id = "johnsmith"  # Replace with your name/identifier
+
+# Instance Configuration
+instance_type = "t2.micro"  # Free tier eligible
+
+# Memory Optimization for t2.micro
+kafka_memory_limit = 300
+kafka_heap_opts   = "-Xmx150m -Xms75m"
+
+# InfluxDB Configuration - CHANGE THESE FOR SECURITY
+influxdb_token    = "CHANGE-ME-SECURE-TOKEN-123456789"
+influxdb_org      = "CA1"
+influxdb_bucket   = "conveyor_data"
+influxdb_username = "admin"
+influxdb_password = "CHANGE-ME-SECURE-PASSWORD"
+
+# Grafana Configuration
+grafana_admin_password = "CHANGE-ME-SECURE-PASSWORD"
+
+# Advanced Configuration (uncomment if needed)
+# Different instance types for specific components
+# kafka_instance_type = "t3.small"      # More memory for Kafka
+# influxdb_instance_type = "t3.medium"  # More storage for InfluxDB
+# grafana_instance_type = "t2.micro"    # Standard for dashboard
+
+# Multi-AZ deployment (uncomment for production)
+# enable_multi_az = true
+# availability_zones = ["us-east-2a", "us-east-2b"]
+
+# Backup configuration (uncomment for production)
+# enable_backups = true
+# backup_retention_days = 7
+
+# Monitoring configuration
+# enable_cloudwatch = true
+# log_retention_days = 14
