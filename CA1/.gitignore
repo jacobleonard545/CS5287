@@ -1,0 +1,47 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# SSH Keys
+*.pem
+*.ppk
+id_rsa*
+ca1-demo-key*
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local Terraform plans
+*.tfplan
+tfplan
+destroy.tfplan
+
+# Environment-specific files
+.env
+.env.*
+
+# Backup files
+*.backup
+*.bak
+
+# Sensitive data
+secrets/
+credentials/
