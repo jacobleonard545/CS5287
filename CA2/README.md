@@ -26,34 +26,49 @@ Producer (HPA 1-5) → Kafka → Processor → InfluxDB → Grafana
 
 ## Quick Start
 
-### 1. Configure Docker Registry (Optional)
+### 1. Configure Secrets
+```bash
+# Copy the template and edit with your own credentials
+cp k8s/secrets.yaml.template k8s/secrets.yaml
+
+# Generate secure credentials (recommended):
+# InfluxDB token: openssl rand -base64 32
+# Grafana password: openssl rand -base64 16
+# Kafka cluster ID: echo "$(uuidgen | base64)"
+
+# Edit k8s/secrets.yaml and replace all REPLACE_WITH_* placeholders
+```
+
+**IMPORTANT**: Never commit `k8s/secrets.yaml` to version control. It's already in `.gitignore`.
+
+### 2. Configure Docker Registry (Optional)
 ```bash
 export DOCKER_REGISTRY=your-username
 # Or use default: $(whoami)
 ```
 
-### 2. Build Images
+### 3. Build Images
 ```bash
 ./scripts/build-images.sh
 ```
 
-### 3. Deploy
+### 4. Deploy
 ```bash
 ./scripts/deploy.sh
 ```
 
-### 4. Validate
+### 5. Validate
 ```bash
 ./scripts/validate.sh
 # Expected: 26/26 tests passed
 ```
 
-### 5. Access Grafana
+### 6. Access Grafana
 ```bash
 # URL displayed at end of deploy.sh
 # Example: http://localhost:30715
 
-# Login: admin / ChangeThisGrafanaPassword123!
+# Login: admin / <password-from-secrets.yaml>
 # Dashboard: "Conveyor Line Speed Monitoring"
 ```
 
@@ -131,7 +146,7 @@ CA2/
 ├── k8s/                    # Kubernetes manifests
 │   ├── namespace.yaml
 │   ├── rbac.yaml
-│   ├── secrets.yaml
+│   ├── secrets.yaml.template  # Template for secrets (copy to secrets.yaml)
 │   ├── kafka/
 │   ├── influxdb/
 │   ├── processor/

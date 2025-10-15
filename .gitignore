@@ -97,3 +97,7 @@ target/
 # Documentation with sensitive info
 *password*
 *credential*
+# Kubernetes Secrets
+CA2/k8s/secrets.yaml
+CA1/k8s/secrets.yaml
+CA*/k8s/secrets.yaml
