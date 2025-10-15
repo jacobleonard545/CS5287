@@ -162,8 +162,22 @@ CA2/
 │   ├── validate.sh
 │   ├── destroy.sh
 │   └── set-registry.sh
+├── outputs/                # Deliverables for CA2 submission
+│   ├── scaling-test-results.md  # Detailed scaling test with metrics
+│   ├── kubectl-get-all.png      # Screenshot of deployed resources
+│   └── network-policies.yaml    # NetworkPolicy configuration
 └── run_logs/               # Validation audit trail
 ```
+
+## Outputs & Deliverables
+
+Documentation and validation artifacts are provided in the `outputs/` directory:
+
+**Scaling Test Results** (`outputs/scaling-test-results.md`): Detailed scaling test from 1 to 5 replicas with throughput metrics showing ~1.07 msg/sec at baseline and ~1.67 msg/sec at maximum scale. Includes pod status, HPA configuration, and validation commands.
+
+**Network Policies** (`outputs/network-policies.yaml`): Complete NetworkPolicy configuration with 6 policies enforcing microsegmentation between Producer, Kafka, Processor, InfluxDB, and Grafana components, plus default deny policy.
+
+**Deployed Resources**: Run `kubectl get all -n conveyor-pipeline` to view all deployed resources including 5 pods (producer, processor, kafka, influxdb, grafana), 4 services, 3 deployments, 2 statefulsets, and 1 HPA.
 
 ## Known Issues
 
