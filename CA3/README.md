@@ -499,6 +499,14 @@ All deliverables are provided in the `outputs/` directory:
 - **grafana-dashboard.png**: Screenshot of "CA3 Pipeline Metrics" with 3 Prometheus panels
 - **log-search.png**: Loki log search filtered by "error" keyword across components
 
+**Grafana Dashboard - 3 Prometheus Metrics:**
+
+![Grafana Metrics Dashboard](img/Grafana-Metrics.png)
+
+**Loki Centralized Log Search:**
+
+![Loki Log Search](img/Grafana-Log-Search.png)
+
 ### Scaling & Performance
 - **scaling-test-results.md**: HPA scaling test (1→2→1 replicas) with CPU metrics
 - **hpa-scaling.png**: Screenshot of HPA scaling events
