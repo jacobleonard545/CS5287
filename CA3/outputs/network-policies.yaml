@@ -1,0 +1,176 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: conveyor-pipeline-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: conveyor-pipeline
+spec:
+  # Default deny all traffic
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: producer-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: producer
+spec:
+  podSelector:
+    matchLabels:
+      app: producer
+  policyTypes:
+  - Egress
+  egress:
+  # Allow producer to connect to Kafka only
+  - to:
+    - podSelector:
+        matchLabels:
+          app: kafka
+    ports:
+    - protocol: TCP
+      port: 9092
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kafka-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: kafka
+spec:
+  podSelector:
+    matchLabels:
+      app: kafka
+  policyTypes:
+  - Ingress
+  ingress:
+  # Allow producers and processors to connect
+  - from:
+    - podSelector:
+        matchLabels:
+          app: producer
+    - podSelector:
+        matchLabels:
+          app: processor
+    ports:
+    - protocol: TCP
+      port: 9092
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: processor-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: processor
+spec:
+  podSelector:
+    matchLabels:
+      app: processor
+  policyTypes:
+  - Egress
+  egress:
+  # Allow processor to connect to Kafka
+  - to:
+    - podSelector:
+        matchLabels:
+          app: kafka
+    ports:
+    - protocol: TCP
+      port: 9092
+  # Allow processor to connect to InfluxDB (when available)
+  - to:
+    - podSelector:
+        matchLabels:
+          app: influxdb
+    ports:
+    - protocol: TCP
+      port: 8086
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: influxdb-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: influxdb
+spec:
+  podSelector:
+    matchLabels:
+      app: influxdb
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow processor to write data
+  - from:
+    - podSelector:
+        matchLabels:
+          app: processor
+    ports:
+    - protocol: TCP
+      port: 8086
+  egress:
+  # Allow DNS resolution only
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: grafana-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: grafana
+spec:
+  podSelector:
+    matchLabels:
+      app: grafana
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow access to Grafana dashboard from anywhere (port 3000)
+  - from: []
+    ports:
+    - protocol: TCP
+      port: 3000
+  egress:
+  # Allow Grafana to query InfluxDB
+  - to:
+    - podSelector:
+        matchLabels:
+          app: influxdb
+    ports:
+    - protocol: TCP
+      port: 8086
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53

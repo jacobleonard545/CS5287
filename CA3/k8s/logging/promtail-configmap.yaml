@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: conveyor-pipeline
+  labels:
+    app: promtail
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions/positions.yaml
+
+    clients:
+      - url: http://loki-service:3100/loki/api/v1/push
+
+    scrape_configs:
+      # Scrape logs from all pods in conveyor-pipeline namespace
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - conveyor-pipeline
+        relabel_configs:
+          # Add namespace label
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+
+          # Add pod name label
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+          # Add container name label
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+
+          # Add app label from pod labels
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+
+          # Add component label from pod labels if exists
+          - source_labels: [__meta_kubernetes_pod_label_component]
+            target_label: component
+
+          # Set the path to the logs
+          - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+            target_label: __path__
+            separator: /
+            replacement: /var/log/pods/*$1/*.log
+
+          # Drop logs from pods without labels
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: .+

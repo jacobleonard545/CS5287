@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+  namespace: conveyor-pipeline
+  labels:
+    app: producer
+    component: data-generation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+        component: data-generation
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      serviceAccountName: conveyor-pipeline-sa
+      containers:
+      - name: producer
+        image: j14le/conveyor-producer:ca3-metrics
+        imagePullPolicy: Never
+        env:
+        - name: KAFKA_BROKER
+          valueFrom:
+            configMapKeyRef:
+              name: producer-config
+              key: KAFKA_BROKER
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: producer-config
+              key: KAFKA_TOPIC
+        - name: CONVEYOR_ID
+          valueFrom:
+            configMapKeyRef:
+              name: producer-config
+              key: CONVEYOR_ID
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"
+
+        readinessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - "import sys; sys.exit(0)"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        livenessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - "import sys; sys.exit(0)"
+          initialDelaySeconds: 20
+          periodSeconds: 20

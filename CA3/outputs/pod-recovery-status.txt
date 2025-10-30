@@ -1,0 +1,9 @@
+NAME                          READY   STATUS    RESTARTS   AGE     IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-589b4c86d5-7tfgx      1/1     Running   0          10m     10.1.0.103   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0          15m     10.1.0.99    docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0          6m2s    10.1.0.106   docker-desktop   <none>           <none>
+loki-6fdf478f4-qxr8v          1/1     Running   0          9h      10.1.0.90    docker-desktop   <none>           <none>
+processor-66cc659d46-656t2    1/1     Running   0          6m49s   10.1.0.105   docker-desktop   <none>           <none>
+producer-58cdbb84df-s77c9     1/1     Running   0          7m28s   10.1.0.104   docker-desktop   <none>           <none>
+prometheus-6f9cdb5955-8vwfr   1/1     Running   0          3d      10.1.0.76    docker-desktop   <none>           <none>
+promtail-vfck7                1/1     Running   0          9h      10.1.0.91    docker-desktop   <none>           <none>

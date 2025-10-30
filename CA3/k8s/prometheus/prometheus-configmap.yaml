@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: conveyor-pipeline
+  labels:
+    app: prometheus
+    component: monitoring
+data:
+  prometheus.yml: |
+    # Prometheus Configuration for CA3 Pipeline Monitoring
+    global:
+      scrape_interval: 15s      # Scrape targets every 15 seconds
+      evaluation_interval: 15s  # Evaluate rules every 15 seconds
+      external_labels:
+        cluster: 'conveyor-pipeline-ca3'
+        environment: 'development'
+
+    # Scrape configurations
+    scrape_configs:
+      # Prometheus self-monitoring
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+            labels:
+              component: 'prometheus'
+              tier: 'monitoring'
+
+      # Kubernetes pod discovery (for future application metrics in Milestone 3)
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - conveyor-pipeline
+
+        # Relabeling rules: only scrape pods with prometheus.io/scrape=true annotation
+        relabel_configs:
+          # Check if pod has prometheus.io/scrape annotation
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+          # Use prometheus.io/path annotation for metrics path (default: /metrics)
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+
+          # Use prometheus.io/port annotation for metrics port (default: pod port)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+          # Add pod name as label
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+          # Add namespace as label
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+
+          # Add app label from pod labels
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
+
+          # Add component label from pod labels
+          - source_labels: [__meta_kubernetes_pod_label_component]
+            action: replace
+            target_label: component
+
+    # Alerting configuration (placeholder for future milestones)
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: []
+
+    # Rule files (for recording rules and alerts in future milestones)
+    rule_files:
+      # - "alerts.yml"
