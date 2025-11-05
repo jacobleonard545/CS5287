@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: producer-config
+  namespace: conveyor-pipeline-edge
+data:
+  KAFKA_BROKER: "3.148.242.194:9092"  # Direct connection to AWS Kafka
+  KAFKA_TOPIC: "conveyor-speed"

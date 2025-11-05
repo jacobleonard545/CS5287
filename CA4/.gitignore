@@ -1,0 +1,75 @@
+# CA4 - Security: Never commit sensitive files
+
+# Environment files with actual credentials
+.env
+.env.cloud
+.env.local
+.env.*.local
+
+# AWS credentials and keys
+*.pem
+*.key
+ca4-key
+ca4-key.pub
+.ssh/
+
+# TLS certificates (regenerate for each deployment)
+tls-certs/*.pem
+tls-certs/*.key
+tls-certs/*.crt
+k8s/tls/*.pem
+k8s/tls/*.key
+
+# Kubernetes secrets with actual values
+k8s/secrets.yaml
+
+# Terraform state files (may contain sensitive data)
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs that might contain sensitive data
+*.log
+run_logs/*.txt
+run_logs/*.log
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Docker credentials
+.docker/config.json
+
+# Backup files
+*.bak
+*.backup
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Keep template files (these are safe to commit)
+!*.template
+!k8s/secrets.yaml.template
+!.env.cloud.template

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: producer-config
+  namespace: conveyor-pipeline
+  labels:
+    app: producer
+    component: data-generation
+data:
+  KAFKA_BROKER: "kafka-service:9092"
+  KAFKA_TOPIC: "conveyor-speed"
+  CONVEYOR_ID: "line_1"

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: influxdb-config
+  namespace: conveyor-pipeline
+data:
+  INFLUXDB_ORG: "conveyor-org"
+  INFLUXDB_BUCKET: "conveyor-data"

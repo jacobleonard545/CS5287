@@ -1,0 +1,209 @@
+==========================================
+CA3 Resilience Testing Script
+==========================================
+This script will:
+  1. Delete producer pod and observe recovery
+  2. Delete processor pod and observe recovery
+  3. Delete Kafka pod and observe StatefulSet recovery
+
+Namespace: conveyor-pipeline
+Watch duration per test: 30s
+==========================================
+
+==========================================
+TEST 1: Producer Pod Failure & Recovery
+==========================================
+
+Step 1: Show current producer pod status
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS       AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0              154m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0              154m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0              154m   10.1.0.113   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0              147m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-rsx94    1/1     Running   5 (148m ago)   154m   10.1.0.114   docker-desktop   <none>           <none>
+producer-5c87bd6d97-qp7z2     1/1     Running   1 (153m ago)   154m   10.1.0.116   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0              154m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0              147m   10.1.0.120   docker-desktop   <none>           <none>
+
+Step 2: Get producer pod name
+Producer pod: producer-5c87bd6d97-qp7z2
+
+Step 3: Delete producer pod
+pod "producer-5c87bd6d97-qp7z2" deleted from conveyor-pipeline namespace
+✅ Producer pod deleted
+
+Step 4: Watch recovery (30s)
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS       AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0              154m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0              154m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0              154m   10.1.0.113   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0              148m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-rsx94    1/1     Running   5 (149m ago)   154m   10.1.0.114   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0              34s    10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0              154m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0              148m   10.1.0.120   docker-desktop   <none>           <none>
+
+Waiting for new producer pod to be ready...
+Waiting for pod with label app=producer to be ready...
+pod/producer-5c87bd6d97-4cslt condition met
+✅ Pod is ready!
+Step 5: Verify producer is functioning
+
+Recent logs from producer-5c87bd6d97-4cslt:
+2025-10-30 01:05:49,846 - INFO - [2025-10-30T01:05:49.844200+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:50,850 - INFO - [2025-10-30T01:05:50.847741+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:51,856 - INFO - [2025-10-30T01:05:51.851973+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:52,861 - INFO - [2025-10-30T01:05:52.857476+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:53,865 - INFO - [2025-10-30T01:05:53.862074+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:54,869 - INFO - [2025-10-30T01:05:54.866990+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:55,872 - INFO - [2025-10-30T01:05:55.869455+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:56,875 - INFO - [2025-10-30T01:05:56.873988+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:57,879 - INFO - [2025-10-30T01:05:57.877125+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+2025-10-30 01:05:58,882 - INFO - [2025-10-30T01:05:58.880728+00:00] Speed: 0.000 m/s | State: stopped | Pod: producer-5c87bd6d97-4cslt
+
+✅ TEST 1 COMPLETE: Producer recovered successfully
+
+==========================================
+TEST 2: Processor Pod Failure & Recovery
+==========================================
+
+Step 1: Show current processor pod status
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS       AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0              154m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0              154m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0              154m   10.1.0.113   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0              148m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-rsx94    1/1     Running   5 (149m ago)   154m   10.1.0.114   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0              40s    10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0              154m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0              148m   10.1.0.120   docker-desktop   <none>           <none>
+
+Step 2: Get processor pod name
+Processor pod: processor-64bcb694df-rsx94
+
+Step 3: Delete processor pod
+pod "processor-64bcb694df-rsx94" deleted from conveyor-pipeline namespace
+✅ Processor pod deleted
+
+Step 4: Watch recovery (30s)
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS   AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0          155m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0          155m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0          155m   10.1.0.113   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0          148m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-pkmmr    1/1     Running   0          32s    10.1.0.124   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0          73s    10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0          155m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0          148m   10.1.0.120   docker-desktop   <none>           <none>
+
+Waiting for new processor pod to be ready...
+Waiting for pod with label app=processor to be ready...
+pod/processor-64bcb694df-pkmmr condition met
+✅ Pod is ready!
+Step 5: Verify processor is functioning
+
+Recent logs from processor-64bcb694df-pkmmr:
+/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'influxdb-service'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'influxdb-service'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'influxdb-service'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'influxdb-service'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py:1097: InsecureRequestWarning: Unverified HTTPS request is being made to host 'influxdb-service'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+
+✅ TEST 2 COMPLETE: Processor recovered successfully
+
+==========================================
+TEST 3: Kafka StatefulSet Recovery
+==========================================
+
+Step 1: Show current Kafka pod status
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS   AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0          155m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0          155m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0          155m   10.1.0.113   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0          148m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-pkmmr    1/1     Running   0          38s    10.1.0.124   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0          79s    10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0          155m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0          148m   10.1.0.120   docker-desktop   <none>           <none>
+
+Step 2: Get Kafka pod name
+Kafka pod: kafka-0
+
+Step 3: Delete Kafka pod
+pod "kafka-0" deleted from conveyor-pipeline namespace
+✅ Kafka pod deleted
+
+Step 4: Watch StatefulSet recovery (30s)
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS   AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0          155m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0          155m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       0/1     Running   0          6s     10.1.0.125   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0          148m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-pkmmr    1/1     Running   0          47s    10.1.0.124   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0          88s    10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0          155m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0          148m   10.1.0.120   docker-desktop   <none>           <none>
+
+Waiting for Kafka StatefulSet to recreate pod...
+Waiting for pod with label app=kafka to be ready...
+pod/kafka-0 condition met
+✅ Pod is ready!
+Step 5: Verify Kafka is functioning
+
+Recent logs from kafka-0:
+[2025-10-30 01:07:24,482] INFO [GroupCoordinator 1]: Member kafka-python-2.2.15-88cb1c5e-be1f-4b01-84c7-b34ff20ec3a6 in group data-processor-group has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+[2025-10-30 01:07:24,485] INFO [GroupCoordinator 1]: Preparing to rebalance group data-processor-group in state PreparingRebalance with old generation 3 (__consumer_offsets-41) (reason: removing member kafka-python-2.2.15-88cb1c5e-be1f-4b01-84c7-b34ff20ec3a6 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+[2025-10-30 01:07:24,488] INFO [GroupCoordinator 1]: Group data-processor-group with generation 4 is now empty (__consumer_offsets-41) (kafka.coordinator.group.GroupCoordinator)
+[2025-10-30 01:07:24,722] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20235 in 14 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:25,223] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20236 in 6 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:25,723] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20237 in 21 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:26,223] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20238 in 15 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:26,723] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20239 in 15 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:27,224] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20240 in 15 us. (org.apache.kafka.image.loader.MetadataLoader)
+[2025-10-30 01:07:27,724] INFO [MetadataLoader 1] handleSnapshot: generated a metadata delta from a snapshot at offset 20241 in 16 us. (org.apache.kafka.image.loader.MetadataLoader)
+
+✅ TEST 3 COMPLETE: Kafka recovered successfully
+
+==========================================
+FINAL STATUS CHECK
+==========================================
+
+Current pod status:
+NAME                          READY   STATUS    RESTARTS   AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+grafana-556f7c56c4-rvd5b      1/1     Running   0          156m   10.1.0.115   docker-desktop   <none>           <none>
+influxdb-0                    1/1     Running   0          156m   10.1.0.118   docker-desktop   <none>           <none>
+kafka-0                       1/1     Running   0          42s    10.1.0.125   docker-desktop   <none>           <none>
+loki-97c65d65c-mpxnl          1/1     Running   0          149m   10.1.0.119   docker-desktop   <none>           <none>
+processor-64bcb694df-pkmmr    1/1     Running   0          83s    10.1.0.124   docker-desktop   <none>           <none>
+producer-5c87bd6d97-4cslt     1/1     Running   0          2m4s   10.1.0.123   docker-desktop   <none>           <none>
+prometheus-6d8df9cddd-58vmg   1/1     Running   0          156m   10.1.0.117   docker-desktop   <none>           <none>
+promtail-fnshd                1/1     Running   0          149m   10.1.0.120   docker-desktop   <none>           <none>
+
+
+==========================================
+RESILIENCE TEST SUMMARY
+==========================================
+✅ Producer pod: Self-healing verified
+✅ Processor pod: Self-healing verified
+✅ Kafka StatefulSet: Recovery verified
+
+All components demonstrated successful recovery!
+Kubernetes self-healing capabilities validated.
+==========================================

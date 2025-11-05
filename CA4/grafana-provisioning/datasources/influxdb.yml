@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-ConveyorData
+    uid: InfluxDB-ConveyorData
+    type: influxdb
+    access: proxy
+    url: https://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: VanderbiltU
+      defaultBucket: conveyor-data
+      tlsSkipVerify: true
+    secureJsonData:
+      token: ${INFLUXDB_TOKEN}
+    editable: false

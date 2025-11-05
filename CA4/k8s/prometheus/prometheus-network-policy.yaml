@@ -1,0 +1,84 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: prometheus-network-policy
+  namespace: conveyor-pipeline
+  labels:
+    app: prometheus
+    component: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app: prometheus
+  policyTypes:
+    - Ingress
+    - Egress
+
+  # Ingress rules: allow port-forward and internal access
+  ingress:
+    # Allow access to Prometheus UI (for port-forward and internal queries)
+    - from:
+        - podSelector: {}  # Allow from any pod in namespace (for port-forward)
+      ports:
+        - protocol: TCP
+          port: 9090
+
+  # Egress rules: allow Prometheus to scrape targets
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+        - podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+
+    # Allow scraping Kubernetes API server (for service discovery)
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 6443
+
+    # Allow scraping producer pods (metrics on port 8000 - for Milestone 3)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: producer
+      ports:
+        - protocol: TCP
+          port: 8000
+
+    # Allow scraping processor pods (metrics on port 8000 - for Milestone 3)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: processor
+      ports:
+        - protocol: TCP
+          port: 8000
+
+    # Allow scraping Kafka pods (JMX metrics on port 9999 - optional for future)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: kafka
+      ports:
+        - protocol: TCP
+          port: 9999
+
+    # Allow scraping itself (self-monitoring)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: prometheus
+      ports:
+        - protocol: TCP
+          port: 9090

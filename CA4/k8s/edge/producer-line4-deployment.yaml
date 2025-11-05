@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-line4
+  namespace: conveyor-pipeline-edge
+  labels:
+    app: producer
+    line: line4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+      line: line4
+  template:
+    metadata:
+      labels:
+        app: producer
+        line: line4
+    spec:
+      containers:
+      - name: producer
+        image: j14le/conveyor-producer:ca3-metrics
+        imagePullPolicy: Never
+        env:
+        - name: KAFKA_BROKER
+          valueFrom:
+            configMapKeyRef:
+              name: producer-config
+              key: KAFKA_BROKER
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: producer-config
+              key: KAFKA_TOPIC
+        - name: CONVEYOR_ID
+          value: "line_4"
+        ports:
+        - containerPort: 8000
+          name: metrics
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
