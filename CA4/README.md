@@ -1,5 +1,7 @@
 # CA4: Multi-Hybrid Cloud Deployment
 
+![Grafana Dashboard](img/Grafana-Dashboard.png)
+
 Extends CA3 with multi-site cloud deployment across Edge (local Kubernetes) and Cloud (AWS), with secure connectivity and validated failure recovery.
 
 ## Topology: Edge → Cloud with SSH Tunnels
