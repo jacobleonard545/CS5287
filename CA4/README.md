@@ -619,6 +619,12 @@ Located in `outputs/` directory:
 - **Impact**: Certificate warnings in logs (cosmetic)
 - **Expected**: Self-signed certs for development/testing
 
+## Failure Recovery Demonstration
+
+![Grafana Recovery Demo](img/video1961872537.gif)
+
+**Grafana Failure & Recovery**: Demonstrates container-level resilience with zero data loss. The visualization layer (Grafana) is taken down while the data pipeline (Producers→Kafka→Processor→InfluxDB) continues operating. Manual restart recovers the dashboard in ~35 seconds with full data continuity. See [GRAFANA-RECOVERY-RUNBOOK.md](GRAFANA-RECOVERY-RUNBOOK.md) for complete procedures and troubleshooting guide for all pipeline components.
+
 ## Future Enhancements
 
 - **Multi-Cloud**: Deploy processor to GCP, Kafka to AWS
