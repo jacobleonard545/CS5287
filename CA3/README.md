@@ -550,6 +550,12 @@ All deliverables are provided in the `outputs/` directory:
 - Validated self-healing
 - Operator runbooks
 
+## Pod Failure & Recovery Demonstration
+
+![Pod Recovery Demo](img/video1664440391.gif)
+
+**Kubernetes Self-Healing Validation**: Demonstrates automated pod recovery with zero manual intervention. Three critical components (Producer, Processor, Kafka) are individually deleted to simulate failures. Kubernetes Deployment and StatefulSet controllers automatically recreate all pods within 35-37 seconds. Data pipeline continues operating throughout with Kafka buffering preventing message loss. See [pod-recovery-demo-auto.sh](scripts/pod-recovery-demo-auto.sh) for the automated test script and generated reports for detailed recovery metrics.
+
 ## Known Issues
 
 ### Self-Signed Certificate Warnings
